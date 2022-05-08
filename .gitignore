@@ -1,3 +1,4 @@
 *.DS_Store
 .DS_Store
-*tabla*.txt
+*tabl*.txt
+*node_modules/

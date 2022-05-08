@@ -1,0 +1,15 @@
+{
+  "name": "app-practice",
+  "version": "0.0.1",
+  "description": "App for create Table of Base Number in a File",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Alonzo Choque",
+  "license": "MIT",
+  "dependencies": {
+    "colors": "^1.4.0",
+    "yargs": "^17.4.1"
+  }
+}
