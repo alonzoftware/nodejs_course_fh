@@ -36,9 +36,27 @@ const pauseInquirer = async () => {
     console.log('\n');
     await inquirer.prompt(question);
 }
+const readInputInquirer = async (message) => {
+
+    const question = [{
+        type: 'input',
+        name: 'descrip',
+        message,
+        validate(value){
+            if  (value.length === 0){
+                return 'Please Ingress a Value';
+            }
+            return true;
+        }
+    }]
+    console.log('\n');
+    const {descrip} = await inquirer.prompt(question);
+    return descrip;
+}
 
 
 module.exports = {
     showMainMenuInquirer,
-    pauseInquirer
+    pauseInquirer,
+    readInputInquirer,
 }
