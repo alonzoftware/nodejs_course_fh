@@ -1,0 +1,16 @@
+{
+  "name": "tasks-manager-by-cli",
+  "version": "0.0.1",
+  "description": "App for Organize Tasks by CLI",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Alonzo Choque",
+  "license": "MIT",
+  "dependencies": {
+    "colors": "^1.4.0",
+    "inquirer": "^8.2.4",
+    "yargs": "^17.4.1"
+  }
+}
