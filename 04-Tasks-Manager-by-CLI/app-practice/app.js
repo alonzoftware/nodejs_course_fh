@@ -7,6 +7,7 @@ const { showMainMenuInquirer,
         readInputInquirer,
         } = require('./helpers/ui_menu_inquirer');
 const Tasks = require('./models/tasks');
+const {savedb,readdb} = require('./helpers/db_manager');
 console.clear();
 
 const mainReadline = async () => {
@@ -22,6 +23,15 @@ const mainReadline = async () => {
 const mainInquirer = async () => {
 
     const tasks = new Tasks();
+    const tasksArrayFromDB = readdb();
+    // console.log(tasksArrayFromDB);
+    if (tasksArrayFromDB){
+        // Object.keys(tasksArrayFromDB).forEach(key => {
+        //     console.log(tasksArrayFromDB[key]);
+        // })
+        tasks.taskList = tasksArrayFromDB;
+    }
+    // await pauseInquirer();
     let opt = '';
     do {
         opt = await showMainMenuInquirer();
@@ -39,6 +49,7 @@ const mainInquirer = async () => {
         
         }
 
+        savedb(tasks.taskList);
 
         if (opt !== '0') await pauseInquirer();
     } while (opt !== '0');
