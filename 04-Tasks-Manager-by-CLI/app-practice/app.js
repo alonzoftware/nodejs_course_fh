@@ -8,6 +8,7 @@ const { showMainMenuInquirer,
         } = require('./helpers/ui_menu_inquirer');
 const Tasks = require('./models/tasks');
 const {savedb,readdb} = require('./helpers/db_manager');
+const { ListType } = require("./helpers/enumerates");
 console.clear();
 
 const mainReadline = async () => {
@@ -24,14 +25,12 @@ const mainInquirer = async () => {
 
     const tasks = new Tasks();
     const tasksArrayFromDB = readdb();
-    // console.log(tasksArrayFromDB);
+    //console.log(tasksArrayFromDB);
     if (tasksArrayFromDB){
-        // Object.keys(tasksArrayFromDB).forEach(key => {
-        //     console.log(tasksArrayFromDB[key]);
-        // })
         tasks.taskList = tasksArrayFromDB;
+        //console.log(tasks._taskList);
     }
-    // await pauseInquirer();
+    //await pauseInquirer();
     let opt = '';
     do {
         opt = await showMainMenuInquirer();
@@ -43,13 +42,22 @@ const mainInquirer = async () => {
                 tasks.addTask(descrip);
                 break;
             case '2':
-                console.log(tasks._taskList);
-                
+                tasks.showItemsList(ListType.All);
+            
+            break
+            
+            case '3':
+                tasks.showItemsList(ListType.Completed);
+            
+            break
+            case '4':
+                tasks.showItemsList(ListType.Pending);
+            
             break
         
         }
 
-        savedb(tasks.taskList);
+        savedb(tasks.taskListArray);
 
         if (opt !== '0') await pauseInquirer();
     } while (opt !== '0');
