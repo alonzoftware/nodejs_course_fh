@@ -30,16 +30,23 @@ class Tasks {
     const task = new Task(descrip);
     this._taskList[task.id] = task;
   }
+  delTask(id = ''){
+    if (this._taskList[id]){
+      delete this._taskList[id];
+    }
+  }
 
   showItemsList(listType = ListType.Completed) {
     let count = 1;
     this.taskListArray.map((task, i) => {
       let descrip = "";
+      let completedAt = "";
       switch (listType) {
         case ListType.Completed:
           if (task.completedAt) {
             descrip = task.descrip;
-            console.log(`${count}. `.green + descrip + `:: ${'Completed'.yellow}`);
+            completedAt = `${task.completedAt}`.yellow;
+            console.log(`${count}. `.green + descrip + `:: ${'Completed'.yellow} - ` + completedAt);
           }
           count++;
           break;

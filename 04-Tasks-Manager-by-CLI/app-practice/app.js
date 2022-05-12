@@ -5,6 +5,7 @@ const { showMainMenuReadline, pauseReadline } = require('./helpers/ui_menu_readl
 const { showMainMenuInquirer, 
         pauseInquirer ,
         readInputInquirer,
+        showTasksMenuList,
         } = require('./helpers/ui_menu_inquirer');
 const Tasks = require('./models/tasks');
 const {savedb,readdb} = require('./helpers/db_manager');
@@ -54,6 +55,13 @@ const mainInquirer = async () => {
                 tasks.showItemsList(ListType.Pending);
             
             break
+            case '6':
+                const id = await showTasksMenuList(tasks.taskListArray);
+                console.log(id);
+            
+            break
+
+            
         
         }
 

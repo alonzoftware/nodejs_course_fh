@@ -26,6 +26,29 @@ const showMainMenuInquirer = async () => {
     const { opt } = await inquirer.prompt(menuOpts);
     return opt
 }
+
+const showTasksMenuList = async (tasksArray = []) => {
+   
+
+    const choices = tasksArray.map((task,i) => {
+        const idx = `${i+1}. `.green;
+        return  {
+                value : task.id,
+                name : `${idx} ${task.descrip}`,
+        }
+        
+    });
+    //console.log(choices);
+    const menuTasks = [{
+        type: 'list',
+        name: 'id',
+        message: 'Select a Task to Delete',
+        choices
+    }];
+    const { id } = await inquirer.prompt(menuTasks);
+    return id
+}
+
 const pauseInquirer = async () => {
 
     const question = [{
@@ -42,15 +65,15 @@ const readInputInquirer = async (message) => {
         type: 'input',
         name: 'descrip',
         message,
-        validate(value){
-            if  (value.length === 0){
+        validate(value) {
+            if (value.length === 0) {
                 return 'Please Ingress a Value';
             }
             return true;
         }
     }]
     console.log('\n');
-    const {descrip} = await inquirer.prompt(question);
+    const { descrip } = await inquirer.prompt(question);
     return descrip;
 }
 
@@ -59,4 +82,6 @@ module.exports = {
     showMainMenuInquirer,
     pauseInquirer,
     readInputInquirer,
+    showTasksMenuList,
+
 }
