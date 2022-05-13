@@ -30,10 +30,20 @@ class Tasks {
     const task = new Task(descrip);
     this._taskList[task.id] = task;
   }
-  delTask(id = ''){
-    if (this._taskList[id]){
+  delTask(id = '') {
+    if (this._taskList[id]) {
       delete this._taskList[id];
     }
+  }
+  setCompleted(ids = []) {
+    this.taskListArray.forEach(task => {
+      this._taskList[task.id].completedAt = null;
+    });
+    ids.forEach(id => {
+      const dateStr = new Date().toLocaleDateString();
+      const timeStr = new Date().toLocaleTimeString();
+      this._taskList[id].completedAt = `${dateStr} ${timeStr}`;
+    });
   }
 
   showItemsList(listType = ListType.Completed) {
@@ -59,9 +69,9 @@ class Tasks {
           break;
         case ListType.All:
           descrip = task.descrip;
-          (task.completedAt) 
-          ? console.log(`${count}. `.green + descrip + `:: ${'Completed'.yellow}`)
-          : console.log(`${count}. `.green + descrip + `:: ${'Pending'.red}`);
+          (task.completedAt)
+            ? console.log(`${count}. `.green + descrip + `:: ${'Completed'.yellow}`)
+            : console.log(`${count}. `.green + descrip + `:: ${'Pending'.red}`);
           count++;
           break;
       }

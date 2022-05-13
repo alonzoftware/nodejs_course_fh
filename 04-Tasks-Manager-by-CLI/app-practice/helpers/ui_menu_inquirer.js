@@ -28,15 +28,15 @@ const showMainMenuInquirer = async () => {
 }
 
 const showTasksMenuList = async (tasksArray = []) => {
-   
 
-    const choices = tasksArray.map((task,i) => {
-        const idx = `${i+1}. `.green;
-        return  {
-                value : task.id,
-                name : `${idx} ${task.descrip}`,
+
+    const choices = tasksArray.map((task, i) => {
+        const idx = `${i + 1}. `.green;
+        return {
+            value: task.id,
+            name: `${idx} ${task.descrip}`,
         }
-        
+
     });
     //console.log(choices);
     const menuTasks = [{
@@ -47,6 +47,29 @@ const showTasksMenuList = async (tasksArray = []) => {
     }];
     const { id } = await inquirer.prompt(menuTasks);
     return id
+}
+const showTasksMenuListForSetCompleted = async (tasksArray = []) => {
+
+
+    const choices = tasksArray.map((task, i) => {
+        const idx = `${i + 1}. `.green;
+        const completedAt = (task.completedAt) ? `${task.completedAt}`.green : 'Pending'.red
+        return {
+            value: task.id,
+            name: `${idx} ${task.descrip} :: ${completedAt}`,
+            checked: (task.completedAt) ? true : false,
+        }
+
+    });
+    //console.log(choices);
+    const menuTasks = [{
+        type: 'checkbox',
+        name: 'ids',
+        message: 'Select a Task to set Completed/Pending',
+        choices
+    }];
+    const { ids } = await inquirer.prompt(menuTasks);
+    return ids
 }
 
 const pauseInquirer = async () => {
@@ -76,12 +99,23 @@ const readInputInquirer = async (message) => {
     const { descrip } = await inquirer.prompt(question);
     return descrip;
 }
-
+const confirmInquirer = async (message) => {
+    const question = [{
+        type: 'confirm',
+        name: 'ok',
+        message,
+    }]
+    console.log('\n');
+    const { ok } = await inquirer.prompt(question);
+    return ok;
+}
 
 module.exports = {
     showMainMenuInquirer,
     pauseInquirer,
     readInputInquirer,
     showTasksMenuList,
+    confirmInquirer,
+    showTasksMenuListForSetCompleted,
 
 }
