@@ -9,6 +9,7 @@ const {
 const Searchings = require('./models/searchings');
 
 const main = async () => {
+    let history = [];
     const searchings = new Searchings();
     let opt = -1;
     do {
@@ -17,9 +18,29 @@ const main = async () => {
             case 1:
                 const placeSearch = await readInput('Ingress a place for Search');
                 const places = await searchings.places(placeSearch);
-                console.log(places);
+                const idPlace = await showPlacesMenuList(places);
+                if (idPlace === '0') continue;
+                const place = places.find(place => place.id === idPlace);
+                if (!history.includes(place.name)) {
+                    history.push(place.name);
+                }
+                const weatherInfo = await searchings.weather(place.lat, place.lon)
+
+                console.log(`==== RESULT SEARCH ====`);
+                console.log(`Place Name: ${place.name}`);
+                console.log(`Lat: ${place.lat}`);
+                console.log(`Lon: ${place.lon}`);
+                console.log(`Temp: ${weatherInfo.temp}`);
+                console.log(`Min Temp: ${weatherInfo.temp_min}`);
+                console.log(`Max Temp: ${weatherInfo.temp_max}`);
+                break;
+            case 2:
+                history.forEach(item => {
+                    console.log(item);
+                });
                 break;
         }
+
 
         if (opt !== 0) await pause();
     } while (opt !== 0);

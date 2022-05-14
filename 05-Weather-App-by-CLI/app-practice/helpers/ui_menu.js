@@ -23,15 +23,16 @@ const showMainMenu = async () => {
 }
 
 const showPlacesMenuList = async (placesArray = []) => {
-
-
     const choices = placesArray.map((place, i) => {
         const idx = `${i + 1}. `.green;
         return {
             value: place.id,
-            name: `${idx} ${place.descrip}`,
+            name: `${idx} ${place.name}`,
         }
-
+    });
+    choices.unshift({
+        value: '0',
+        name: `${'0.'.green} Exit`,
     });
     //console.log(choices);
     const menuPlaces = [{

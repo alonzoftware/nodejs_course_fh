@@ -1,4 +1,6 @@
 *.DS_Store
 .DS_Store
 *tabl*.txt
+.env
+*.env
 *node_modules/

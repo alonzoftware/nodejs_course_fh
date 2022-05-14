@@ -1,6 +1,7 @@
 const axios = require('axios');
 
 class Searchings {
+
     constructor() {
 
     }
@@ -13,11 +14,11 @@ class Searchings {
         }
     }
 
-    get paramsWeather() {
+    get paramsOpenWeather() {
         return {
             appid: process.env.OPENWEATHER_KEY,
             units: 'metric',
-            lang: 'es'
+            lang: 'en'
         }
     }
 
@@ -30,15 +31,39 @@ class Searchings {
             });
 
             const resp = await intance.get();
-            return resp.data.features.map(lugar => ({
-                id: lugar.id,
-                name: lugar.place_name,
-                lng: lugar.center[0],
-                lat: lugar.center[1],
+            return resp.data.features.map(place => ({
+                id: place.id,
+                name: place.place_name,
+                lon: place.center[0],
+                lat: place.center[1],
             }));
 
         } catch (error) {
             return [];
+        }
+    }
+
+    async weather(lat = '', lon = '') {
+        try {
+            // http request
+            const intance = axios.create({
+                baseURL: `https://api.openweathermap.org/data/2.5/weather`,
+                params: { ...this.paramsOpenWeather, lat, lon }
+            });
+
+            const resp = await intance.get();
+            const { weather, main } = resp.data;
+
+            return {
+                descrip: weather[0].description,
+                temp: main.temp,
+                temp_min: main.temp_min,
+                temp_max: main.temp_max,
+            }
+            // console.log(resp.data);
+
+        } catch (error) {
+            return {};
         }
     }
 }
