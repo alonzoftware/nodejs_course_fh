@@ -2,11 +2,11 @@
 const fs = require('fs');
 const pathFile = './db/dbfile.json'
 
-const savedb = (dataArray) => {
+const saveDB = (dataObj) => {
 
-    fs.writeFileSync(pathFile, JSON.stringify(dataArray));
+    fs.writeFileSync(pathFile, JSON.stringify(dataObj));
 }
-const readdb = () => {
+const readDB = () => {
     if (!fs.existsSync(pathFile)) {
         return null;
     }
@@ -17,6 +17,6 @@ const readdb = () => {
 
 
 module.exports = {
-    savedb,
-    readdb,
+    saveDB,
+    readDB,
 }

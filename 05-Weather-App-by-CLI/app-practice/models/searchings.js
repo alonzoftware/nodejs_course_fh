@@ -1,10 +1,20 @@
 const axios = require('axios');
 
-class Searchings {
+const {
+    saveDB,
+    readDB,
+} = require('../helpers/db_manager');
 
+class Searchings {
+    history = []
     constructor() {
 
+        const infoDB = readDB();
+        if (infoDB) {
+            this.history = infoDB.history;
+        }
     }
+
 
     get paramsMapbox() {
         return {
@@ -20,6 +30,14 @@ class Searchings {
             units: 'metric',
             lang: 'en'
         }
+    }
+
+    get historyCapitalized() {
+        return this.history.map(placeStr => {
+            let placeArray = placeStr.split(' ');
+            placeArray = placeArray.map(p => p[0].toUpperCase() + p.substring(1));
+            return placeArray.join(' ');
+        });
     }
 
     async places(placeSearch = '') {
@@ -65,6 +83,16 @@ class Searchings {
         } catch (error) {
             return {};
         }
+    }
+
+    addPlaceToHistory(placeStr = '') {
+        if (this.history.includes(placeStr.toLowerCase())) return;
+        this.history.unshift(placeStr.toLowerCase());
+        this.history = this.history.slice(0, 5);
+        const payload = {
+            history: this.history
+        };
+        saveDB(payload);
     }
 }
 module.exports = Searchings;

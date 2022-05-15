@@ -9,7 +9,6 @@ const {
 const Searchings = require('./models/searchings');
 
 const main = async () => {
-    let history = [];
     const searchings = new Searchings();
     let opt = -1;
     do {
@@ -21,9 +20,7 @@ const main = async () => {
                 const idPlace = await showPlacesMenuList(places);
                 if (idPlace === '0') continue;
                 const place = places.find(place => place.id === idPlace);
-                if (!history.includes(place.name)) {
-                    history.push(place.name);
-                }
+                searchings.addPlaceToHistory(place.name);
                 const weatherInfo = await searchings.weather(place.lat, place.lon)
 
                 console.log(`==== RESULT SEARCH ====`);
@@ -35,8 +32,9 @@ const main = async () => {
                 console.log(`Max Temp: ${weatherInfo.temp_max}`);
                 break;
             case 2:
-                history.forEach(item => {
-                    console.log(item);
+                searchings.historyCapitalized.forEach((item, i) => {
+                    const idx = `${i + 1}.`.green;
+                    console.log(`${idx} ${item} `);
                 });
                 break;
         }
