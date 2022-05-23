@@ -8,11 +8,24 @@ const {
   userPatch,
 } = require("../controllers/user");
 const { validateFields } = require("../middlewares/validate-fields");
-const { validateRole, validateEmail } = require("../helpers/validate-db");
+const {
+  validateRole,
+  existEmail,
+  existUserID,
+} = require("../helpers/validate-db");
 
 const router = Router();
 
-router.get("/", userGet);
+router.get(
+  "/",
+  [
+    check("page", "The page number must be greater than or equal to one").isInt(
+      { min: 1, max: 50 }
+    ),
+    validateFields,
+  ],
+  userGet
+);
 router.post(
   "/",
   [
@@ -25,15 +38,33 @@ router.post(
     // check("role").custom((role) => {
     //   return validateRole(role);
     // }),
-    check("email").custom(validateEmail),
+    check("email").custom(existEmail),
     check("role").custom(validateRole),
     validateFields,
   ],
   userPost
 );
 
-router.put("/:id", userPut);
-router.delete("/", userDelete);
+router.put(
+  "/:id",
+  [
+    check("id", "This is not a Valid Mongo ID").isMongoId(),
+    check("id").custom(existUserID),
+    check("role", "Role not found").not().isEmpty(),
+    check("role").custom(validateRole),
+    validateFields,
+  ],
+  userPut
+);
+router.delete(
+  "/:id",
+  [
+    check("id", "This is not a Valid Mongo ID").isMongoId(),
+    check("id").custom(existUserID),
+    validateFields,
+  ],
+  userDelete
+);
 router.patch("/", userPatch);
 
 module.exports = router;

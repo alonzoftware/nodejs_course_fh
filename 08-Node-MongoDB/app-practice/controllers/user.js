@@ -1,13 +1,25 @@
 const { request, response } = require("express");
 const bcryptjs = require("bcryptjs");
 const User = require("../models/user");
+const user = require("../models/user");
 
-const userGet = (req = request, res = response) => {
-  const { nameUser, ageUser } = req.body;
-  res.json({
-    msg: "This is a GET request",
-    nameUser,
-    ageUser,
+const userGet = async (req = request, res = response) => {
+  let { page = 1, limit = 5 } = req.query;
+  page = Number(page - 1) * Number(limit);
+  const cond = { status: true }; //Condition
+  // const users = await user.find({status : true});
+  // const total = await user.countDocuments(cond);
+  // const users = await user.find(cond).skip(Number(page)).limit(Number(limit));
+
+  const [total, users] = await Promise.all([
+    user.countDocuments(cond),
+    user.find(cond).skip(Number(page)).limit(Number(limit)),
+  ]);
+
+  res.status(200).json({
+    msg: "This is a GET RESPONSE",
+    total,
+    users,
   });
 };
 const userPost = async (req = request, res = response) => {
@@ -38,16 +50,35 @@ const userPost = async (req = request, res = response) => {
     user,
   });
 };
-const userPut = (req = request, res = response) => {
-  const id = req.params.id;
+const userPut = async (req = request, res = response) => {
+  // const id = req.params.id;
+  const { id } = req.params;
+  const { pass, email, google, ...restParams } = req.body;
+  if (pass) {
+    const salt = bcryptjs.genSaltSync(); //10 by default
+    restParams.pass = bcryptjs.hashSync(pass, salt);
+  }
+  // const user = await User.findByIdAndUpdate(id, restParams); // Old User
+  const userUpd = await User.findByIdAndUpdate(id, restParams, { new: true }); // New User
+
   res.status(202).json({
     msg: "This is a PUT request",
-    id: id,
+    userUpd,
   });
 };
-const userDelete = (req = request, res = response) => {
+const userDelete = async (req = request, res = response) => {
+  const id = req.params.id;
+
+  // const userDel = await User.findByIdAndDelete(id);//Not Recomended - Inconsistent References
+  const userDel = await User.findByIdAndUpdate(
+    id,
+    { status: false },
+    { new: true }
+  );
+
   res.json({
     msg: "This is a DELETE request",
+    userDel,
   });
 };
 const userPatch = (req = request, res = response) => {

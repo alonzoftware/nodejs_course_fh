@@ -8,14 +8,21 @@ const validateRole = async (role = "") => {
   }
 };
 
-const validateEmail = async (email = "") => {
+const existEmail = async (email = "") => {
   const emailExist = await User.findOne({ email }); //{email : email}
   if (emailExist) {
     throw new Error(`The Email ${email} is duplicated in DB`);
   }
 };
+const existUserID = async (id = "") => {
+  const userIdExist = await User.findOne({ id }); //{email : email}
+  if (!userIdExist) {
+    throw new Error(`The User ID ${id} not Exist`);
+  }
+};
 
 module.exports = {
   validateRole,
-  validateEmail,
+  existEmail,
+  existUserID,
 };
