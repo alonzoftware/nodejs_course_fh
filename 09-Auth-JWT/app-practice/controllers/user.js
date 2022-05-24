@@ -1,7 +1,6 @@
 const { request, response } = require("express");
 const bcryptjs = require("bcryptjs");
 const User = require("../models/user");
-const user = require("../models/user");
 
 const userGet = async (req = request, res = response) => {
   let { page = 1, limit = 5 } = req.query;
@@ -12,8 +11,8 @@ const userGet = async (req = request, res = response) => {
   // const users = await user.find(cond).skip(Number(page)).limit(Number(limit));
 
   const [total, users] = await Promise.all([
-    user.countDocuments(cond),
-    user.find(cond).skip(Number(page)).limit(Number(limit)),
+    User.countDocuments(cond),
+    User.find(cond).skip(Number(page)).limit(Number(limit)),
   ]);
 
   res.status(200).json({
@@ -68,7 +67,7 @@ const userPut = async (req = request, res = response) => {
 };
 const userDelete = async (req = request, res = response) => {
   const id = req.params.id;
-
+  const userAuth = req.userAuth;
   // const userDel = await User.findByIdAndDelete(id);//Not Recomended - Inconsistent References
   const userDel = await User.findByIdAndUpdate(
     id,
@@ -79,6 +78,7 @@ const userDelete = async (req = request, res = response) => {
   res.json({
     msg: "This is a DELETE request",
     userDel,
+    userAuth,
   });
 };
 const userPatch = (req = request, res = response) => {
