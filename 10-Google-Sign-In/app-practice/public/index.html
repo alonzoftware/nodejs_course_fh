@@ -1,35 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>GOOGLE SIGN IN</title>
-</head>
+  </head>
 
-<body>
+  <body>
     <h1>GOOGLE SIGN IN</h1>
-    <div id="g_id_onload"
-         data-client_id="58791206860-fo3op7ijs27aodiqeiak68ole6kjhn7o.apps.googleusercontent.com"
-         data-callback="handleCredentialResponse"
-         data-auto_prompt="false">
-      </div>
-      <div class="g_id_signin"
-         data-type="standard"
-         data-size="large"
-         data-theme="outline"
-         data-text="sign_in_with"
-         data-shape="rectangular"
-         data-logo_alignment="left">
-      </div>
+    <div
+      id="g_id_onload"
+      data-client_id="58791206860-fo3op7ijs27aodiqeiak68ole6kjhn7o.apps.googleusercontent.com"
+      data-callback="handleCredentialResponse"
+      data-auto_prompt="false"
+    ></div>
+    <div
+      class="g_id_signin"
+      data-type="standard"
+      data-size="large"
+      data-theme="outline"
+      data-text="sign_in_with"
+      data-shape="rectangular"
+      data-logo_alignment="left"
+    ></div>
+    <button id="g_id_signout">Sign Out</button>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script>
-        function handleCredentialResponse(response) {
-           // decodeJwtResponse() is a custom function defined by you
-           // to decode the credential response.
+      function handleCredentialResponse(response) {
+        // decodeJwtResponse() is a custom function defined by you
+        // to decode the credential response.
         //    const responsePayload = decodeJwtResponse(response.credential);
-      
+
         //    console.log("ID: " + responsePayload.sub);
         //    console.log('Full Name: ' + responsePayload.name);
         //    console.log('Given Name: ' + responsePayload.given_name);
@@ -38,23 +40,32 @@
         //    console.log("Email: " + responsePayload.email);
         //GOOGLE TOKEN
         // console.log(`id_token : ${ response.credential}`);
-        const body = { id_token: response.credential }
-        fetch('http://localhost:8085/api/auth/google', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(body)
+        const body = { id_token: response.credential };
+        fetch("http://localhost:8085/api/auth/google", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(body),
         })
-        .then(resp => resp.json())
-        .then(resp => {
-            console.log(resp)
-        })
-        .catch(console.warn);
+          .then((resp) => resp.json())
+          .then((resp) => {
+            console.log(resp);
+            localStorage.setItem("email", resp.user.email);
+          })
+          .catch(console.warn);
+      }
 
-
-        }
-      </script>
-</body>
-
+      const button = document.getElementById("g_id_signout");
+      button.onclick = async () => {
+        console.log(google.accounts.id);
+        google.accounts.id.disableAutoSelect();
+        google.accounts.id.revoke(localStorage.getItem("email"), (done) => {
+          console.log("consent revoked");
+          localStorage.clear();
+          location.reload();
+        });
+      };
+    </script>
+  </body>
 </html>

@@ -2,6 +2,7 @@ const { request, response } = require("express");
 const bcryptjs = require("bcryptjs");
 const User = require("../models/user");
 const generateJWT = require("../helpers/generate-jwt");
+const { googleVerify } = require("../helpers/google-verify");
 
 const authPostLogin = async (req = request, res = response) => {
   const { email, pass } = req.body;
@@ -43,10 +44,40 @@ const authPostLogin = async (req = request, res = response) => {
 const googleSignIn = async (req = request, res = response) => {
   const { id_token } = req.body;
 
-  res.status(200).json({
-    msg: "Google Auth OK!",
-    id_token: id_token,
-  });
+  try {
+    const googleUser = await googleVerify(id_token);
+
+    let user = await User.findOne({ email: googleUser.email });
+    if (!user) {
+      data = {
+        email: googleUser.email,
+        name: googleUser.name,
+        img: googleUser.img,
+        pass: ":p",
+        status: true,
+        google: true,
+        role: "USER_ROLE",
+      };
+      user = new User(data);
+
+      await user.save();
+    }
+
+    if (!user.status) {
+      return res.status(400).json({
+        msg: `User with email : ${user.email} is Disable, speak with Administrator`,
+      });
+    }
+
+    res.status(200).json({
+      msg: "Google Auth OK!",
+      user,
+    });
+  } catch (error) {
+    res.status(400).json({
+      msg: `Token Invalid with Error : ${error}`,
+    });
+  }
 };
 module.exports = {
   authPostLogin,
