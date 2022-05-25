@@ -15,7 +15,7 @@ const existEmail = async (email = "") => {
   }
 };
 const existUserID = async (id = "") => {
-  const userIdExist = await User.findOne({ id }); //{email : email}
+  const userIdExist = await User.findById(id); //{email : email}
   if (!userIdExist) {
     throw new Error(`The User ID ${id} not Exist`);
   }

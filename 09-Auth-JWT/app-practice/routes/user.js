@@ -7,8 +7,18 @@ const {
   userDelete,
   userPatch,
 } = require("../controllers/user");
-const { validateFields } = require("../middlewares/validate-fields");
-const validateJWT = require("../middlewares/validate-jwt");
+
+// const { validateFields } = require("../middlewares/validate-fields");
+// const validateJWT = require("../middlewares/validate-jwt");
+// const { isAdminRole, hasTheseRoles } = require("../middlewares/validate-role");
+
+const {
+  validateFields,
+  validateJWT,
+  isAdminRole,
+  hasTheseRoles,
+} = require("../middlewares");
+
 const {
   validateRole,
   existEmail,
@@ -61,6 +71,8 @@ router.delete(
   "/:id",
   [
     validateJWT,
+    // isAdminRole,
+    hasTheseRoles("ADMIN_ROLE", "SALES_ROLE"),
     check("id", "This is not a Valid Mongo ID").isMongoId(),
     check("id").custom(existUserID),
     validateFields,
