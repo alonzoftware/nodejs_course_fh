@@ -1,4 +1,5 @@
 const { request, response } = require("express");
+const { Category } = require("../models");
 
 const categoryGetAll = async (req = request, res = response) => {
   //   let { page = 1, limit = 5 } = req.query;
@@ -22,8 +23,23 @@ const categoryGetID = async (req = request, res = response) => {
   });
 };
 const categoryPostAdd = async (req = request, res = response) => {
+  const name = req.body.name.toUpperCase();
+  const categoryDB = await Category.findOne({ name });
+  if (categoryDB) {
+    return res.status(400).json({
+      msg: `The Category ${name} is duplicated in DB`,
+    });
+  }
+
+  const data = {
+    name,
+    user: req.userAuth._id,
+  };
+  const category = new Category(data);
+  await category.save();
   res.status(200).json({
     msg: "This is a POST RESPONSE",
+    category,
   });
 };
 const categoryPutUpd = async (req = request, res = response) => {

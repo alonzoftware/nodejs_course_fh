@@ -34,7 +34,15 @@ router.get(
   categoryGetAll
 );
 router.get("/:id", [validateFields], categoryGetID);
-router.post("/", [validateJWT, validateFields], categoryPostAdd);
+router.post(
+  "/",
+  [
+    validateJWT,
+    check("name", "The Name is required").not().isEmpty(),
+    validateFields,
+  ],
+  categoryPostAdd
+);
 
 router.put("/:id", [validateFields], categoryPutUpd);
 router.delete("/:id", [validateFields], categoryDel);
