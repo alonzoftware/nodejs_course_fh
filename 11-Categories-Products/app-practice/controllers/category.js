@@ -1,6 +1,5 @@
 const { request, response } = require("express");
 const { Category } = require("../models");
-const mongoose = require("mongoose");
 
 const categoryGetAll = async (req = request, res = response) => {
   let { page = 1, rows = 5 } = req.query;
@@ -23,7 +22,10 @@ const categoryGetAll = async (req = request, res = response) => {
 };
 const categoryGetID = async (req, res = response) => {
   const { id } = req.params;
-  const category = await Category.findById(id).populate("user", ["name"]);
+  const category = await Category.findById(id).populate("user", [
+    "name",
+    "email",
+  ]); //Join with User field
   res.status(200).json({
     msg: "This is a GET RESPONSE BY ID",
     category,
@@ -31,12 +33,6 @@ const categoryGetID = async (req, res = response) => {
 };
 const categoryPostAdd = async (req = request, res = response) => {
   const name = req.body.name.toUpperCase();
-  const categoryDB = await Category.findOne({ name });
-  if (categoryDB) {
-    return res.status(400).json({
-      msg: `The Category ${name} is duplicated in DB`,
-    });
-  }
 
   const data = {
     name,

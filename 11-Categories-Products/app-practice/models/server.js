@@ -12,6 +12,8 @@ class Server {
       user: "/api/user",
       auth: "/api/auth",
       category: "/api/category",
+      product: "/api/product",
+      search: "/api/search",
     };
 
     //Connect to Database
@@ -34,6 +36,8 @@ class Server {
     this.app.use(this.path.user, require("../routes/user"));
     this.app.use(this.path.auth, require("../routes/auth"));
     this.app.use(this.path.category, require("../routes/category"));
+    this.app.use(this.path.product, require("../routes/product"));
+    this.app.use(this.path.search, require("../routes/search"));
   }
   listen() {
     this.app.listen(this.port, () => {
