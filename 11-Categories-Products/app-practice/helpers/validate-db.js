@@ -1,5 +1,5 @@
-const Role = require("../models/role");
-const User = require("../models/user");
+const { Role, User, Category } = require("../models");
+const mongoose = require("mongoose");
 
 const validateRole = async (role = "") => {
   const existRole = await Role.findOne({ role });
@@ -20,9 +20,28 @@ const existUserID = async (id = "") => {
     throw new Error(`The User ID ${id} not Exist`);
   }
 };
+const existCategoryID = async (id) => {
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    throw new Error(`This is not a Valid Mongo ID`);
+  }
+
+  const categoryIdExist = await Category.findById(id); //{email : email}
+  if (!categoryIdExist) {
+    throw new Error(`The Category ID ${id} not Exist`);
+  }
+};
+const isDuplicateCategoryName = async (name = "") => {
+  const nameDB = name.toUpperCase();
+  const categoryNameDB = await Category.findOne({ name: nameDB }); //{email : email}
+  if (categoryNameDB) {
+    throw new Error(`The Category ${nameDB} is duplicated in DB`);
+  }
+};
 
 module.exports = {
   validateRole,
   existEmail,
   existUserID,
+  existCategoryID,
+  isDuplicateCategoryName,
 };

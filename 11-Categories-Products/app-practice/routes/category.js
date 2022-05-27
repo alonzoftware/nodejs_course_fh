@@ -19,6 +19,8 @@ const {
   validateRole,
   existEmail,
   existUserID,
+  existCategoryID,
+  isDuplicateCategoryName,
 } = require("../helpers/validate-db");
 
 const router = Router();
@@ -33,7 +35,16 @@ router.get(
   ],
   categoryGetAll
 );
-router.get("/:id", [validateFields], categoryGetID);
+router.get(
+  "/:id",
+  [
+    // check("id", "This is not a Valid Mongo ID").isMongoId(),
+    check("id").custom(existCategoryID),
+    validateFields,
+  ],
+  categoryGetID
+);
+
 router.post(
   "/",
   [
@@ -44,7 +55,30 @@ router.post(
   categoryPostAdd
 );
 
-router.put("/:id", [validateFields], categoryPutUpd);
-router.delete("/:id", [validateFields], categoryDel);
+router.put(
+  "/:id",
+  [
+    validateJWT,
+    // check("id", "This is not a Valid Mongo ID").isMongoId(),
+    check("id").custom(existCategoryID),
+    check("name", "The Name is required").not().isEmpty(),
+    check("name").custom((name) => {
+      return isDuplicateCategoryName(name);
+    }),
+    validateFields,
+  ],
+  categoryPutUpd
+);
+router.delete(
+  "/:id",
+  [
+    validateJWT,
+    hasTheseRoles("ADMIN_ROLE"),
+    // check("id", "This is not a Valid Mongo ID").isMongoId(),
+    check("id").custom(existCategoryID),
+    validateFields,
+  ],
+  categoryDel
+);
 
 module.exports = router;
