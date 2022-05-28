@@ -1,30 +1,8 @@
 const { request, response } = require("express");
 const { ObjectId } = require("mongoose").Types;
-const { Product } = require("../models");
+const { Product, User, Category } = require("../models");
 
 const allowCollections = ["user", "category", "product", "role"];
-
-const collectionProduct = async (term, res = response) => {
-  const isMongoID = ObjectId.isValid(term); // TRUE
-
-  if (isMongoID) {
-    const product = await Product.findById(term);
-    return res.status(200).json({
-      results: product ? [product] : [],
-    });
-  }
-
-  const regex = new RegExp(term, "i");
-  const products = await Product.find({
-    $or: [{ name: regex }, { descrip: regex }],
-    $and: [{ status: true }],
-  });
-
-  res.status(200).json({
-    msg: "This is a SEARCH GET RESPONSE",
-    result: products,
-  });
-};
 
 const searchGet = async (req = request, res = response) => {
   let { page = 1, limit = 5 } = req.query;
@@ -43,8 +21,10 @@ const searchGet = async (req = request, res = response) => {
       collectionProduct(term, res);
       break;
     case "category":
+      collectionCategory(term, res);
       break;
     case "user":
+      collectionUser(term, res);
       break;
 
     default:
@@ -60,6 +40,74 @@ const searchGet = async (req = request, res = response) => {
   //     collection,
   //     term,
   //   });
+};
+
+const collectionProduct = async (term, res = response) => {
+  const isMongoID = ObjectId.isValid(term); // TRUE
+
+  if (isMongoID) {
+    const product = await Product.findById(term);
+    return res.status(200).json({
+      results: product ? [product] : [],
+    });
+  }
+
+  const regex = new RegExp(term, "i");
+  const products = await Product.find({
+    $or: [{ name: regex }, { descrip: regex }],
+    $and: [{ status: true }],
+  });
+
+  res.status(200).json({
+    msg: "This is a SEARCH PRODUCT GET RESPONSE",
+    result: products,
+  });
+};
+const collectionUser = async (term, res = response) => {
+  const isMongoID = ObjectId.isValid(term); // TRUE
+
+  if (isMongoID) {
+    const user = await User.findById(term);
+    return res.status(200).json({
+      results: user ? [user] : [],
+    });
+  }
+
+  const regex = new RegExp(term, "i");
+  const users = await User.find({
+    $or: [{ name: regex }, { email: regex }],
+    $and: [{ status: true }],
+  });
+
+  res.status(200).json({
+    msg: "This is a SEARCH USER GET RESPONSE",
+    result: users,
+  });
+};
+const collectionCategory = async (term, res = response) => {
+  const isMongoID = ObjectId.isValid(term); // TRUE
+
+  if (isMongoID) {
+    const category = await Category.findById(term);
+    return res.status(200).json({
+      results: category ? [category] : [],
+    });
+  }
+
+  const regex = new RegExp(term, "i");
+  // const total = await Category.countDocuments({ name: regex, status: true });
+  // const categories = await Category.find({ name: regex, status: true });
+  const cond = { name: regex, status: true };
+  const [total, categories] = await Promise.all([
+    Category.countDocuments(cond),
+    Category.find(cond),
+  ]);
+
+  res.status(200).json({
+    msg: "This is a SEARCH USER GET RESPONSE",
+    total,
+    result: categories,
+  });
 };
 
 module.exports = {
