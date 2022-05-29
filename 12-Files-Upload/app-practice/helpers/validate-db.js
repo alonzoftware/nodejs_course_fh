@@ -54,6 +54,12 @@ const isDuplicateProductName = async (name = "") => {
     throw new Error(`The Product ${nameDB} is duplicated in DB`);
   }
 };
+const allowedCollections = (collection, collections = []) => {
+  if (!collections.includes(collection)) {
+    throw new Error(`Only these collections are allowed : ${collections}`);
+  }
+  return true;
+};
 
 module.exports = {
   validateRole,
@@ -63,4 +69,5 @@ module.exports = {
   existProductID,
   isDuplicateCategoryName,
   isDuplicateProductName,
+  allowedCollections,
 };
