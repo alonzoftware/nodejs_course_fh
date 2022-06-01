@@ -1,50 +1,52 @@
-var params = new URLSearchParams(window.location.search);
+const params = new URLSearchParams(window.location.search);
+if (!params.has("nombre") || !params.has("sala")) {
+  window.location = "index.html";
+  throw new Error("The Name/Room are required");
+}
+const userName = params.get("nombre");
+const userRoom = params.get("sala");
+//Reference HTML Controls
+const divUsuarios = $("#divUsuarios");
+const formEnviar = $("#formEnviar");
+const txtMensaje = $("#txtMensaje");
+const divChatbox = $("#divChatbox");
+divChatbox.html("");
 
-var nombre = params.get("nombre");
-var sala = params.get("sala");
-
-// referencias de jQuery
-var divUsuarios = $("#divUsuarios");
-var formEnviar = $("#formEnviar");
-var txtMensaje = $("#txtMensaje");
-var divChatbox = $("#divChatbox");
-
-// Funciones para renderizar usuarios
-function renderizarUsuarios(personas) {
-  // [{},{},{}]
-
-  console.log(personas);
-
-  var html = "";
+const renderUsers = (people = []) => {
+  let html = "";
 
   html += "<li>";
-  html += '    <a href="javascript:void(0)" class="active"> Chat de <span> ' + params.get("sala") + "</span></a>";
+  html += '<a href="javascript:void(0)" class="active">';
+  html += "Chat de <span>" + userRoom + "</span>";
+  html += "</a>";
   html += "</li>";
-
-  for (var i = 0; i < personas.length; i++) {
+  for (let i = 0; i < people.length; i++) {
     html += "<li>";
-    html += '    <a data-id="' + personas[i].id + '"  href="javascript:void(0)"><img src="assets/images/users/1.jpg" alt="user-img" class="img-circle"> <span>' + personas[i].nombre + ' <small class="text-success">online</small></span></a>';
+    html += '<a href="javascript:void(0)" data-id="' + people[i].id + '">';
+    html += '<img src="assets/images/users/1.jpg" alt="user-img" class="img-circle" /> <span>' + people[i].name + '<small class="text-success">online</small></span>';
+    html += "</a>";
     html += "</li>";
   }
 
   divUsuarios.html(html);
-}
+};
 
-function renderizarMensajes(mensaje, yo) {
+function renderMessages(msg, yo) {
+  console.log(msg, yo);
   var html = "";
-  var fecha = new Date(mensaje.fecha);
+  var fecha = new Date(msg.time);
   var hora = fecha.getHours() + ":" + fecha.getMinutes();
 
   var adminClass = "info";
-  if (mensaje.nombre === "Administrador") {
+  if (msg.name === "Administrador") {
     adminClass = "danger";
   }
 
   if (yo) {
     html += '<li class="reverse">';
     html += '    <div class="chat-content">';
-    html += "        <h5>" + mensaje.nombre + "</h5>";
-    html += '        <div class="box bg-light-inverse">' + mensaje.mensaje + "</div>";
+    html += "        <h5>" + msg.name + "</h5>";
+    html += '        <div class="box bg-light-inverse">' + msg.msg + "</div>";
     html += "    </div>";
     html += '    <div class="chat-img"><img src="assets/images/users/5.jpg" alt="user" /></div>';
     html += '    <div class="chat-time">' + hora + "</div>";
@@ -52,24 +54,24 @@ function renderizarMensajes(mensaje, yo) {
   } else {
     html += '<li class="animated fadeIn">';
 
-    if (mensaje.nombre !== "Administrador") {
+    if (msg.name !== "Admin") {
       html += '    <div class="chat-img"><img src="assets/images/users/1.jpg" alt="user" /></div>';
     }
 
     html += '    <div class="chat-content">';
-    html += "        <h5>" + mensaje.nombre + "</h5>";
-    html += '        <div class="box bg-light-' + adminClass + '">' + mensaje.mensaje + "</div>";
+    html += "        <h5>" + msg.name + "</h5>";
+    html += '        <div class="box bg-light-' + adminClass + '">' + msg.msg + "</div>";
     html += "    </div>";
     html += '    <div class="chat-time">' + hora + "</div>";
     html += "</li>";
   }
 
   divChatbox.append(html);
+  scrollBottom();
 }
-
 function scrollBottom() {
   // selectors
-  var newMessage = divChatbox.children("li:last-child");
+  let newMessage = divChatbox.children("li:last-child");
 
   // heights
   var clientHeight = divChatbox.prop("clientHeight");
@@ -82,10 +84,9 @@ function scrollBottom() {
     divChatbox.scrollTop(scrollHeight);
   }
 }
-
-// Listeners
+//Listeners
 divUsuarios.on("click", "a", function () {
-  var id = $(this).data("id");
+  let id = $(this).data("id");
 
   if (id) {
     console.log(id);
@@ -100,15 +101,13 @@ formEnviar.on("submit", function (e) {
   }
 
   socket.emit(
-    "crearMensaje",
+    "send-room-message",
     {
-      nombre: nombre,
-      mensaje: txtMensaje.val(),
+      msg: txtMensaje.val(),
     },
-    function (mensaje) {
+    function (msg) {
       txtMensaje.val("").focus();
-      renderizarMensajes(mensaje, true);
-      scrollBottom();
+      renderMessages(msg, true);
     }
   );
 });
