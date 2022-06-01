@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Socket Client</title>
+    <!-- CSS only -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor"
+      crossorigin="anonymous"
+    />
+  </head>
+
+  <body>
+    <h1 class="m-2">Socket Client</h1>
+    <hr />
+    <p class="m-2">
+      Server Status
+      <span id="lblOnline" class="text-success">Online</span>
+      <span id="lblOffline" class="text-danger">Offline</span>
+    </p>
+
+    <form action="chat.html">
+      <input
+        autocomplete="off"
+        type="text"
+        placeholder="Name"
+        autofocus
+        name="name"
+      />
+      <input autocomplete="off" type="text" placeholder="Room" name="room" />
+      <button type="submit">SUBMIT</button>
+    </form>
+  </body>
+</html>
