@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const fileUpload = require("express-fileupload");
+const { socketController } = require("../sockets/socket-controller");
 
 const { dbConnect } = require("../database/config");
 
@@ -8,6 +9,8 @@ class Server {
   constructor() {
     this.app = express();
     this.port = process.env.PORT | 8085;
+    this.server = require("http").createServer(this.app);
+    this.io = require("socket.io")(this.server);
 
     this.path = {
       user: "/api/user",
@@ -24,6 +27,8 @@ class Server {
     this.middlewares();
 
     this.routes();
+    //Sockets
+    this.sockets();
   }
   async connectDatabase() {
     await dbConnect();
@@ -49,8 +54,14 @@ class Server {
     this.app.use(this.path.search, require("../routes/search"));
     this.app.use(this.path.upload, require("../routes/upload"));
   }
+
+  sockets() {
+    // this.io.on("connection", (socket) => socketController(socket, this.io));
+    this.io.on("connection", socketController);
+  }
+
   listen() {
-    this.app.listen(this.port, () => {
+    this.server.listen(this.port, () => {
       console.log(`Example app listening on port ${this.port}`);
     });
   }

@@ -69,9 +69,13 @@ const googleSignIn = async (req = request, res = response) => {
       });
     }
 
+    // Generate JWT
+    const token = await generateJWT(user.id);
+
     res.status(200).json({
       msg: "Google Auth OK!",
       user,
+      token,
     });
   } catch (error) {
     res.status(400).json({
