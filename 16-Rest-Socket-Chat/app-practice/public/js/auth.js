@@ -1,6 +1,8 @@
 const miForm = document.querySelector("form");
 
-const url = window.location.hostname.includes("localhost") ? "http://localhost:8085/api/auth/" : "https://restserver-curso-fher.herokuapp.com/api/auth/";
+const url = window.location.hostname.includes("localhost")
+  ? "http://localhost:8085/api/auth/"
+  : "https://restserver-curso-fher.herokuapp.com/api/auth/";
 
 miForm.addEventListener("submit", (ev) => {
   ev.preventDefault();
