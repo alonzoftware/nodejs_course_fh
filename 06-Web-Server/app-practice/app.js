@@ -7,7 +7,7 @@ const hbs = require("hbs");
 hbs.registerPartials(__dirname + "/views/partials");
 app.set("view engine", "hbs");
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 8080;
 
 app.use(express.static(__dirname + "/public"));
 
@@ -41,3 +41,19 @@ app.get("*", (req, res) => {
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
+
+//HTTPS - https://adamtheautomator.com/https-nodejs/
+// const https = require("https");
+// const fs = require("fs");
+
+// https
+//   .createServer(
+//     {
+//       key: fs.readFileSync("./ssl/gestiontickets_net.key"),
+//       cert: fs.readFileSync("./ssl/gestiontickets_net.crt"),
+//     },
+//     app
+//   )
+//   .listen(port, () => {
+//     console.log(`Example app listening on port ${port}`);
+//   });
